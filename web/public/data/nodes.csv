@@ -1,0 +1,337 @@
+id,name,type,Recognizability,movie_count
+P-3,Harrison Ford,Actor,10,1
+P-87485,Neil Armstrong,Actor,10,1
+P-82702,Michael Jackson,Actor,10,1
+P-2888,Will Smith,Actor,10,1
+P-8293,Marion Cotillard,Actor,10,1
+P-3061,Ewan McGregor,Actor,10,1
+P-7904,Billy Crystal,Actor,10,1
+P-8170,Eva Mendes,Actor,10,1
+P-8167,Paul Walker,Actor,10,1
+P-8930,John Cleese,Actor,10,1
+P-18269,Brendan Fraser,Actor,10,1
+P-14,Ellen DeGeneres,Actor,10,1
+P-41686,Neil Patrick Harris,Actor,10,1
+P-6384,Keanu Reeves,Actor,10,1
+P-17051,James Franco,Actor,10,1
+P-2219,Tobey Maguire,Actor,10,1
+P-7499,Jared Leto,Actor,10,1
+P-4135,Robert Redford,Actor,10,1
+P-7399,Ben Stiller,Actor,10,1
+P-65731,Sam Worthington,Actor,10,1
+P-8784,Daniel Craig,Actor,10,1
+P-8851,Whitney Houston,Actor,10,1
+P-8891,John Travolta,Actor,10,1
+P-10980,Daniel Radcliffe,Actor,10,1
+P-16828,Chris Evans,Actor,10,1
+P-16483,Sylvester Stallone,Actor,10,1
+P-7487,David Bowie,Actor,10,1
+P-524,Natalie Portman,Actor,10,1
+P-514,Jack Nicholson,Actor,10,1
+P-500,Tom Cruise,Actor,10,1
+P-3635,Elizabeth Taylor,Actor,10,1
+P-13309,Oprah Winfrey,Actor,10,1
+P-111946,Britney Spears,Actor,10,1
+P-14386,Beyoncé,Actor,10,1
+P-5823,Julie Andrews,Actor,10,1
+P-11701,Angelina Jolie,Actor,10,1
+P-10400,Barbra Streisand,Actor,10,1
+P-325,Eminem,Actor,10,1
+P-287,Brad Pitt,Actor,10,1
+P-62,Bruce Willis,Actor,10,1
+P-10990,Emma Watson,Actor,10,1
+P-2282154,Jimmy Donaldson,Actor,10,1
+P-1700631,Liza Koshy,Actor,10,1
+P-7175,Aretha Franklin,Actor,10,1
+P-115440,Sydney Sweeney,Actor,10,1
+P-155488,Kelly Clarkson,Actor,10,1
+P-22226,Paul Rudd,Actor,10,1
+P-6193,Leonardo DiCaprio,Actor,10,1
+P-6162,Paul Bettany,Actor,10,1
+P-6161,Jennifer Connelly,Actor,10,1
+P-6240,Mariska Hargitay,Actor,10,1
+P-6065,Dennis Quaid,Actor,10,1
+P-204,Kate Winslet,Actor,10,1
+P-206,Jim Carrey,Actor,10,1
+P-192,Morgan Freeman,Actor,10,1
+P-193,Gene Hackman,Actor,10,1
+P-190,Clint Eastwood,Actor,10,1
+P-3084,Marlon Brando,Actor,10,1
+P-1238247,Chrissy Teigen,Actor,10,1
+P-85757,Joe Jonas,Actor,10,1
+P-1562344,Cardi B,Actor,10,1
+P-165899,Simon Cowell,Actor,10,1
+P-56367,Naomi Campbell,Actor,10,1
+P-1549008,The Weeknd,Actor,10,1
+P-7174,Ray Charles,Actor,10,1
+P-9281,Elizabeth Banks,Actor,10,1
+P-7172,James Brown,Actor,10,1
+P-4517,Joe Pesci,Actor,10,1
+P-6968,Hugh Jackman,Actor,10,1
+P-10730,Rowan Atkinson,Actor,10,1
+P-7060,Martin Freeman,Actor,10,1
+P-108558,Shania Twain,Actor,10,1
+P-7056,Emma Thompson,Actor,10,1
+P-4566,Alan Rickman,Actor,10,1
+P-6886,Christina Ricci,Actor,10,1
+P-6885,Charlize Theron,Actor,10,1
+P-20497,Fergie,Actor,10,1
+P-6856,Kurt Russell,Actor,10,1
+P-6736,Pamela Anderson,Actor,10,1
+P-6730,Sacha Baron Cohen,Actor,10,1
+P-6952,Charlie Sheen,Actor,10,1
+P-6949,John Malkovich,Actor,10,1
+P-6941,Cameron Diaz,Actor,10,1
+P-16866,Jennifer Lopez,Actor,10,1
+P-18277,Sandra Bullock,Actor,10,1
+P-17605,Idris Elba,Actor,10,1
+P-1461,George Clooney,Actor,10,1
+P-51962,Bill Cosby,Actor,10,1
+P-51329,Bradley Cooper,Actor,10,1
+P-8261,Willie Nelson,Actor,10,1
+P-30614,Ryan Gosling,Actor,10,1
+P-47296,Jeffrey Dean Morgan,Actor,10,1
+P-14406,Lisa Kudrow,Actor,10,1
+P-13565,Steve McQueen,Actor,10,1
+P-58225,Zach Galifianakis,Actor,10,1
+P-54812,Chevy Chase,Actor,10,1
+P-16377,Jerry Seinfeld,Actor,10,1
+P-65717,Jon Hamm,Actor,10,1
+P-15886,Julia Louis-Dreyfus,Actor,10,1
+P-3359,Laurence Olivier,Actor,10,1
+P-932967,Mahershala Ali,Actor,10,1
+P-16897,Sidney Poitier,Actor,10,1
+P-37917,Kristen Stewart,Actor,10,1
+P-19394,Idina Menzel,Actor,10,1
+P-38673,Channing Tatum,Actor,10,1
+P-1532,Bill Murray,Actor,10,1
+P-71580,Benedict Cumberbatch,Actor,10,1
+P-1813,Anne Hathaway,Actor,10,1
+P-33663,Donald Trump,Actor,10,1
+P-18892,Goldie Hawn,Actor,10,1
+P-1459,Tina Turner,Actor,10,1
+P-16927,Gérard Depardieu,Actor,10,1
+P-57108,Usher,Actor,10,1
+P-12219,Jon Stewart,Actor,10,1
+P-1922,Catherine Zeta-Jones,Actor,10,1
+P-1920,Winona Ryder,Actor,10,1
+P-1892,Matt Damon,Actor,10,1
+P-1216701,"Meghan, Duchess of Sussex",Actor,10,1
+P-31903,Henry Winkler,Actor,10,1
+P-63522,Sofía Vergara,Actor,10,1
+P-64,Gary Oldman,Actor,10,1
+P-3895,Michael Caine,Actor,10,1
+P-3894,Christian Bale,Actor,10,1
+P-1749,Leonard Nimoy,Actor,10,1
+P-1748,William Shatner,Actor,10,1
+P-6352,Jane Fonda,Actor,10,1
+P-112,Cate Blanchett,Actor,10,1
+P-738,Sean Connery,Actor,10,1
+P-1158,Al Pacino,Actor,10,1
+P-1038,Jodie Foster,Actor,10,1
+P-380,Robert De Niro,Actor,10,1
+P-976,Jason Statham,Actor,10,1
+P-934,Russell Crowe,Actor,10,1
+P-10859,Ryan Reynolds,Actor,10,1
+P-38225,Cher,Actor,10,1
+P-54693,Emma Stone,Actor,10,1
+P-955,Penélope Cruz,Actor,10,1
+P-19292,Adam Sandler,Actor,10,1
+P-18918,Dwayne Johnson,Actor,10,1
+P-18897,Jackie Chan,Actor,10,1
+P-4169,Dave Chappelle,Actor,10,1
+P-15152,James Earl Jones,Actor,10,1
+P-17838,Rami Malek,Actor,10,1
+P-2632,Chris Rock,Actor,10,1
+P-880,Ben Affleck,Actor,10,1
+P-776,Eddie Murphy,Actor,10,1
+P-1100,Arnold Schwarzenegger,Actor,10,1
+P-1160,Michelle Pfeiffer,Actor,10,1
+P-1327,Ian McKellen,Actor,10,1
+P-26510,Eugene Levy,Actor,10,1
+P-1283,Helena Bonham Carter,Actor,10,1
+P-1269,Kevin Costner,Actor,10,1
+P-1245,Scarlett Johansson,Actor,10,1
+P-1231,Julianne Moore,Actor,10,1
+P-1230,John Goodman,Actor,10,1
+P-1204,Julia Roberts,Actor,10,1
+P-1205,Richard Gere,Actor,10,1
+P-35806,Shaquille O'Neal,Actor,10,1
+P-55638,Kevin Hart,Actor,10,1
+P-55536,Melissa McCarthy,Actor,10,1
+P-4111,Ingrid Bergman,Actor,10,1
+P-14405,Courteney Cox,Actor,10,1
+P-29222,Zac Efron,Actor,10,1
+P-67773,Steve Martin,Actor,10,1
+P-73968,Henry Cavill,Actor,10,1
+P-22970,Peter Dinklage,Actor,10,1
+P-14407,Matt LeBlanc,Actor,10,1
+P-1052109,Harry Styles,Actor,10,1
+P-1356210,Millie Bobby Brown,Actor,10,1
+P-1700685,Lewis Pullman,Actor,10,1
+P-3490,Adrien Brody,Actor,10,1
+P-10222,Roger Moore,Actor,10,1
+P-2395,Whoopi Goldberg,Actor,10,1
+P-3416,Demi Moore,Actor,10,1
+P-31136,Chris Brown,Actor,10,1
+P-86654,Austin Butler,Actor,10,1
+P-119592,Aubrey Plaza,Actor,10,1
+P-33684,Bono,Actor,10,1
+P-212208,Taylor Swift,Actor,10,1
+P-27319,Christoph Waltz,Actor,10,1
+P-55466,James Corden,Actor,10,1
+P-87773,Aishwarya Rai Bachchan,Actor,10,1
+P-212225,Kim Kardashian,Actor,10,1
+P-90633,Gal Gadot,Actor,10,1
+P-76594,Miley Cyrus,Actor,10,1
+P-3392,Michael Douglas,Actor,10,1
+P-3293,Rachel Weisz,Actor,10,1
+P-3291,Hugh Grant,Actor,10,1
+P-3489,Naomi Watts,Actor,10,1
+P-3896,Liam Neeson,Actor,10,1
+P-3223,Robert Downey Jr.,Actor,10,1
+P-3897,Katie Holmes,Actor,10,1
+P-466505,Kumail Nanjiani,Actor,10,1
+P-60950,David Spade,Actor,10,1
+P-91609,Joe Rogan,Actor,10,1
+P-67849,Mary-Kate Olsen,Actor,10,1
+P-1253360,Pedro Pascal,Actor,10,1
+P-118545,Dakota Johnson,Actor,10,1
+P-53807,Armie Hammer,Actor,10,1
+P-66776,Liza Minnelli,Actor,10,1
+P-117642,Jason Momoa,Actor,10,1
+P-71041,'Weird Al' Yankovic,Actor,10,1
+P-12951,O. J. Simpson,Actor,10,1
+P-53397,Christina Aguilera,Actor,10,1
+P-77271,Pink,Actor,10,1
+P-19961,Nina Dobrev,Actor,10,1
+P-147445,Derek Jeter,Actor,10,1
+P-77069,Lenny Kravitz,Actor,10,1
+P-4173,Anthony Hopkins,Actor,10,1
+P-2176,Tommy Lee Jones,Actor,10,1
+P-57755,Woody Harrelson,Actor,10,1
+P-72129,Jennifer Lawrence,Actor,10,1
+P-2387,Patrick Stewart,Actor,10,1
+P-56731,Jessica Alba,Actor,10,1
+P-2282,Ben Kingsley,Actor,10,1
+P-74568,Chris Hemsworth,Actor,10,1
+P-60642,Tom Petty,Actor,10,1
+P-60017,Faith Hill,Actor,10,1
+P-18973,Mila Kunis,Actor,10,1
+P-40462,Kristen Bell,Actor,10,1
+P-81200,Conan O'Brien,Actor,10,1
+P-58769,Stephen Colbert,Actor,10,1
+P-5958,Hilary Duff,Actor,10,1
+P-2232,Michael Keaton,Actor,10,1
+P-2231,Samuel L. Jackson,Actor,10,1
+P-2228,Sean Penn,Actor,10,1
+P-2227,Nicole Kidman,Actor,10,1
+P-2157,Robin Williams,Actor,10,1
+P-85,Johnny Depp,Actor,10,1
+P-31,Tom Hanks,Actor,10,1
+P-237405,Lady Gaga,Actor,10,1
+P-2461,Mel Gibson,Actor,10,1
+P-3092,Diane Keaton,Actor,10,1
+P-2524,Tom Hardy,Actor,10,1
+P-3036,John Cusack,Actor,10,1
+P-3037,Richard Dreyfuss,Actor,10,1
+P-2628,Kiefer Sutherland,Actor,10,1
+P-19492,Viola Davis,Actor,10,1
+P-31309,Hugh Hefner,Actor,10,1
+P-77948,Selena Gomez,Actor,10,1
+P-14837,Carol Burnett,Actor,10,1
+P-54421,Janet Jackson,Actor,10,1
+P-3125,Madonna,Actor,10,1
+P-52139,Seth MacFarlane,Actor,10,1
+P-2713,Linda Hamilton,Actor,10,1
+P-5049,John Hurt,Actor,10,1
+P-10959,Shia LaBeouf,Actor,10,1
+P-66586,Mariah Carey,Actor,10,1
+P-56323,Tina Fey,Actor,10,1
+P-11370,Elton John,Actor,10,1
+P-119454,Mars,Actor,10,1
+P-224235,DJ Khaled,Actor,10,1
+P-291263,Jordan Peele,Actor,10,1
+P-1959397,Dua Lipa,Actor,10,1
+P-119589,Donald Glover,Actor,10,1
+P-217371,Adam Levine,Actor,10,1
+P-1136517,Sia,Actor,10,1
+P-968660,Nicki Minaj,Actor,10,1
+P-969218,Bruno Mars,Actor,10,1
+P-10583,Gisele Bündchen,Actor,10,1
+P-5081,Emily Blunt,Actor,10,1
+P-5064,Meryl Streep,Actor,10,1
+P-10205,Sigourney Weaver,Actor,10,1
+P-4937,Vince Vaughn,Actor,10,1
+P-4785,Jeff Goldblum,Actor,10,1
+P-4784,Laura Dern,Actor,10,1
+P-10215,Paul McCartney,Actor,10,1
+P-1190668,Timothée Chalamet,Actor,10,1
+P-77234,Priyanka Chopra Jonas,Actor,10,1
+P-236695,John Boyega,Actor,10,1
+P-1315036,Daisy Ridley,Actor,10,1
+P-85138,Demi Lovato,Actor,10,1
+P-59538,David Beckham,Actor,10,1
+P-85930,John Mayer,Actor,10,1
+P-527393,Dylan O'Brien,Actor,10,1
+P-56446,John Cena,Actor,10,1
+P-1493224,Ruth Bader Ginsburg,Actor,10,1
+P-69597,Drew Barrymore,Actor,10,1
+P-5530,James McAvoy,Actor,10,1
+P-5472,Colin Firth,Actor,10,1
+P-5469,Ralph Fiennes,Actor,10,1
+P-226001,Ariana Grande,Actor,10,1
+P-1821863,Post Malone,Actor,10,1
+P-505710,Zendaya,Actor,10,1
+P-113461,John Legend,Actor,10,1
+P-5374,Jim Parsons,Actor,10,1
+P-5309,Judi Dench,Actor,10,1
+P-1137,Juliette Binoche,Actor,10,1
+P-5292,Denzel Washington,Actor,10,1
+P-4483,Dustin Hoffman,Actor,10,1
+P-2963,Nicolas Cage,Actor,10,1
+P-107379,LeBron James,Actor,10,1
+P-446511,Shakira,Actor,10,1
+P-543261,Karen Gillan,Actor,10,1
+P-1009740,Pitbull,Actor,10,1
+P-88124,Jesse Plemons,Actor,10,1
+P-239019,Kit Harington,Actor,10,1
+P-3203609,Elmo,Actor,10,1
+P-53862,Kaley Cuoco,Actor,10,1
+P-6194,Claire Danes,Actor,10,1
+P-1619,Chow Yun-Fat,Actor,10,1
+P-3967,Kate Beckinsale,Actor,10,1
+P-3910,Frances McDormand,Actor,10,1
+P-216294,Lewis Hamilton,Actor,10,1
+P-53975,Deepika Padukone,Actor,10,1
+P-31133,Ne-Yo,Actor,10,1
+P-131519,Rihanna,Actor,10,1
+P-130640,Hailee Steinfeld,Actor,10,1
+P-96091,Carrie Underwood,Actor,10,1
+P-1240487,Kate McKinnon,Actor,10,1
+P-111455,Katy Perry,Actor,10,1
+P-88029,Alison Brie,Actor,10,1
+P-108661,Chester Bennington,Actor,10,1
+P-17380,Jay Chou,Actor,10,1
+P-197315,Drake,Actor,10,1
+P-974169,Jenna Ortega,Actor,10,1
+P-172069,Chadwick Boseman,Actor,10,1
+P-1179651,Lin-Manuel Miranda,Actor,10,1
+P-234352,Margot Robbie,Actor,10,1
+P-998387,Ed Sheeran,Actor,10,1
+P-1223786,Emilia Clarke,Actor,10,1
+P-1136406,Tom Holland,Actor,10,1
+P-4724,Kevin Bacon,Actor,10,1
+P-4690,Christopher Walken,Actor,10,1
+P-4587,Halle Berry,Actor,10,1
+P-4495,Steve Carell,Actor,10,1
+P-4491,Jennifer Aniston,Actor,10,1
+P-3063,Tilda Swinton,Actor,10,1
+P-4431,Jessica Lange,Actor,10,1
+P-4430,Sharon Stone,Actor,10,1
+P-135651,Michael B. Jordan,Actor,10,1
+P-1267329,Lupita Nyong'o,Actor,10,1
+P-550843,Elizabeth Olsen,Actor,10,1
+P-20472,Norah Jones,Actor,10,1
+P-151657,Regis Philbin,Actor,10,1
+P-19429,Bruce Lee,Actor,10,1
