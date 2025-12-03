@@ -1,20 +1,24 @@
 import Papa from 'papaparse';
 import { Actor, MovieEdge, GraphData, CytoscapeNode, CytoscapeEdge } from '@/types/graph';
+import { getDataPaths } from './config';
 
 export async function loadGraphData(): Promise<GraphData> {
   console.log('loadGraphData: Starting...');
   
+  const dataPaths = getDataPaths();
+  console.log('loadGraphData: Using data paths:', dataPaths);
+  
   try {
     // Load nodes CSV
-    console.log('loadGraphData: Fetching nodes.csv...');
-    const nodesResponse = await fetch('/data/nodes.csv');
+    console.log('loadGraphData: Fetching', dataPaths.nodes);
+    const nodesResponse = await fetch(dataPaths.nodes);
     console.log('loadGraphData: Nodes response status:', nodesResponse.status);
     const nodesText = await nodesResponse.text();
     console.log('loadGraphData: Nodes text length:', nodesText.length);
     
     // Load edges CSV
-    console.log('loadGraphData: Fetching edges.csv...');
-    const edgesResponse = await fetch('/data/edges.csv');
+    console.log('loadGraphData: Fetching', dataPaths.edges);
+    const edgesResponse = await fetch(dataPaths.edges);
     console.log('loadGraphData: Edges response status:', edgesResponse.status);
     const edgesText = await edgesResponse.text();
     console.log('loadGraphData: Edges text length:', edgesText.length);

@@ -37,12 +37,17 @@ web/
 │   ├── GraphControls.tsx    # Zoom, reset, search UI (optional)
 │   └── NodeDetails.tsx      # Actor/edge info panel (optional)
 ├── lib/
+│   ├── config.ts            # Configuration (recognizability level)
 │   ├── data-loader.ts       # Load and parse CSV files
 │   └── graph-config.ts      # Cytoscape configuration
 ├── public/
-│   └── data/                # Copy CSV files here
-│       ├── nodes.csv
-│       └── edges.csv
+│   └── data/                # Copy CSV files here with recognizability suffix
+│       ├── nodes_10.csv
+│       ├── edges_10.csv
+│       ├── nodes_9.csv
+│       ├── edges_9.csv
+│       ├── nodes_8.csv
+│       └── edges_8.csv
 └── types/
     └── graph.ts             # TypeScript types for nodes/edges
 ```
@@ -63,13 +68,19 @@ export interface Movie {
   title: string;
   source: string;  // actor ID
   target: string;  // actor ID
-  // Add other fields from edges.csv
+  // Add other fields from edges_*.csv
 }
 ```
 
-### Step 2: Create Data Loader
+### Step 2: Create Configuration
+**File**: `lib/config.ts`
+- Read `NEXT_PUBLIC_RECOGNIZABILITY` environment variable (defaults to 10)
+- Export function to generate CSV paths: `nodes_${RECOGNIZABILITY}.csv`
+
+### Step 3: Create Data Loader
 **File**: `lib/data-loader.ts`
 - Parse CSV files using papaparse
+- Use configuration to determine which CSV files to load
 - Transform data into Cytoscape format:
   ```typescript
   {
@@ -77,16 +88,16 @@ export interface Movie {
     edges: [{ data: { source, target, label } }]
   }
   ```
-- Handle file reading (from public/data or API route)
+- Handle file reading from public/data
 
-### Step 3: Configure Cytoscape
+### Step 4: Configure Cytoscape
 **File**: `lib/graph-config.ts`
 - Define layout: `cose` (force-directed) or `cose-bilkent`
 - Set node styles: uniform circles, labels
 - Set edge styles: lines with optional labels
 - Configure interaction: pan, zoom, tap events
 
-### Step 4: Create Graph Component
+### Step 5: Create Graph Component
 **File**: `components/Graph.tsx`
 - Use `useEffect` to initialize Cytoscape
 - Create a client component (`'use client'`)
@@ -95,21 +106,25 @@ export interface Movie {
 - Handle cleanup on unmount
 - Set up event listeners for hover/click
 
-### Step 5: Build Main Page
+### Step 6: Build Main Page
 **File**: `app/page.tsx`
 - Import Graph component
 - Full viewport layout (100vh, 100vw)
 - Pass data to Graph component
 - Optional: Add loading state
 
-### Step 6: Copy Data Files
+### Step 7: Copy Data Files
 ```bash
-cp ../extract/data/nodes.csv web/public/data/
-cp ../extract/data/edges.csv web/public/data/
-# Or use nodes_1000_r10.csv, edges_1000_r10.csv for smaller test set
+# Copy and rename CSV files with recognizability suffix
+cp ../extract/data/nodes_1000_r10.csv web/public/data/nodes_10.csv
+cp ../extract/data/edges_1000_r10.csv web/public/data/edges_10.csv
+cp ../extract/data/nodes_1000_r9.csv web/public/data/nodes_9.csv
+cp ../extract/data/edges_1000_r9.csv web/public/data/edges_9.csv
+cp ../extract/data/nodes_1000_r8.csv web/public/data/nodes_8.csv
+cp ../extract/data/edges_1000_r8.csv web/public/data/edges_8.csv
 ```
 
-### Step 7: Style the Application
+### Step 8: Style the Application
 **File**: `app/globals.css`
 - Remove default margins/padding
 - Set graph container to full viewport
@@ -165,20 +180,22 @@ style: [
 ### Phase 1: MVP (Basic Graph Display)
 1. Set up Next.js project
 2. Install dependencies
-3. Copy minimal data (nodes_1000_r10.csv, edges_1000_r10.csv)
-4. Create basic Graph component
-5. Load and render graph with default styling
-6. Verify pan and zoom work
+3. Copy data files with recognizability suffix (nodes_10.csv, edges_10.csv)
+4. Create configuration module
+5. Create basic Graph component
+6. Load and render graph with default styling
+7. Verify pan and zoom work
 
 **Goal**: See the graph on screen
 
 ### Phase 2: Data Integration
 1. Implement full CSV parsing
-2. Load complete dataset (or larger subset)
-3. Map actor names and movie titles correctly
-4. Optimize initial layout
+2. Add support for multiple recognizability levels via environment variable
+3. Test with different datasets (r8, r9, r10)
+4. Map actor names and movie titles correctly
+5. Optimize initial layout
 
-**Goal**: Display real data with proper labels
+**Goal**: Display real data with proper labels across different dataset sizes
 
 ### Phase 3: Interactivity
 1. Add hover effects (highlight node/edges)
@@ -194,6 +211,20 @@ style: [
 3. Filters (by time period, genre, etc.)
 4. Responsive tweaks
 
+## Configuration
+
+### Environment Variables
+Create `.env.local` file:
+```bash
+# Recognizability level: 8, 9, or 10 (default: 10)
+NEXT_PUBLIC_RECOGNIZABILITY=10
+```
+
+### Available Datasets
+- **Recognizability 10**: 338 nodes, 4,113 edges (most recognizable actors)
+- **Recognizability 9**: 876 nodes, 18,525 edges (highly recognizable)
+- **Recognizability 8**: 1,002 nodes, 17,314 edges (recognizable)
+
 ## Quick Start Commands
 
 ```bash
@@ -207,10 +238,17 @@ npx create-next-app@latest . --typescript --tailwind --app --no-src-dir
 npm install cytoscape papaparse
 npm install --save-dev @types/cytoscape @types/papaparse
 
-# Copy data
+# Copy data with recognizability suffix
 mkdir -p public/data
-cp ../extract/data/nodes_1000_r10.csv public/data/nodes.csv
-cp ../extract/data/edges_1000_r10.csv public/data/edges.csv
+cp ../extract/data/nodes_1000_r10.csv public/data/nodes_10.csv
+cp ../extract/data/edges_1000_r10.csv public/data/edges_10.csv
+cp ../extract/data/nodes_1000_r9.csv public/data/nodes_9.csv
+cp ../extract/data/edges_1000_r9.csv public/data/edges_9.csv
+cp ../extract/data/nodes_1000_r8.csv public/data/nodes_8.csv
+cp ../extract/data/edges_1000_r8.csv public/data/edges_8.csv
+
+# (Optional) Configure recognizability level
+echo "NEXT_PUBLIC_RECOGNIZABILITY=10" > .env.local
 
 # Start dev server
 npm run dev
@@ -221,11 +259,14 @@ npm run dev
 - [Cytoscape.js Documentation](https://js.cytoscape.org/)
 - [Cytoscape.js COSE Layout Demo](https://js.cytoscape.org/demos/cose-layout/)
 - [Next.js App Router Docs](https://nextjs.org/docs/app)
+- [Next.js Environment Variables](https://nextjs.org/docs/app/building-your-application/configuring/environment-variables)
 
 ## Notes
 
-- Start with smaller dataset (1000 nodes) for faster iteration
+- Start with smaller dataset (recognizability 10: 338 nodes) for faster iteration
+- Use environment variable to switch between datasets without code changes
 - Cytoscape handles pan/zoom out of the box
 - Canvas rendering is automatic for large graphs
 - Can always switch layout algorithms by changing `layout.name`
 - Keep it simple first, add features as needed
+- All CSV files must include recognizability suffix (nodes_8.csv, nodes_9.csv, nodes_10.csv)
