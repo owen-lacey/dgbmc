@@ -16,27 +16,43 @@ export interface MovieEdge {
   release_date: string;
 }
 
-export interface CytoscapeNode {
-  data: {
-    id: string;
-    label: string;
-    recognizability?: number;
-    movieCount?: number;
-  };
+export interface GraphNode {
+  id: string;
+  label: string;
+  recognizability?: number;
+  movieCount?: number;
+  x?: number;
+  y?: number;
 }
 
-export interface CytoscapeEdge {
-  data: {
-    id: string;
-    source: string;
-    target: string;
-    label: string;
-    movieId?: string;
-    releaseDate?: string;
-  };
+export interface GraphEdge {
+  id: string;
+  source: string;
+  target: string;
+  label: string;
+  movieId?: string;
+  releaseDate?: string;
 }
 
 export interface GraphData {
-  nodes: CytoscapeNode[];
-  edges: CytoscapeEdge[];
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
+export interface ViewportTransform {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
+export interface NodePosition {
+  x: number;
+  y: number;
+}
+
+export interface InteractionState {
+  hoveredNodeId: string | null;
+  hoveredEdgeId: string | null;
+  selectedNodeId: string | null;
+  selectedEdgeId: string | null;
 }
