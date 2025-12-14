@@ -67,16 +67,62 @@ export async function loadGraphData(): Promise<GraphData> {
     }));
     console.log('loadGraphData: Nodes transformed:', graphNodes.length);
     
-    // Transform edges to graph format
+    // Transform edges to graph format and combine repeated edges
     console.log('loadGraphData: Transforming edges...');
-    const graphEdges: GraphEdge[] = edgesParsed.data.map((edge, index) => ({
-      id: `e${index}`,
-      source: edge.Source,
-      target: edge.Target,
-      label: edge.movie_title,
-      movieId: edge.movie_id,
-      releaseDate: edge.release_date,
-    }));
+
+    // Group edges by source-target pair (treating edges as undirected)
+    const edgeGroups = new Map<string, MovieEdge[]>();
+
+    edgesParsed.data.forEach((edge) => {
+      // Normalize the pair so that the smaller ID is always first
+      const pair = edge.Source < edge.Target
+        ? `${edge.Source}-${edge.Target}`
+        : `${edge.Target}-${edge.Source}`;
+
+      if (!edgeGroups.has(pair)) {
+        edgeGroups.set(pair, []);
+      }
+      edgeGroups.get(pair)!.push(edge);
+    });
+
+    // Create combined edges
+    const graphEdges: GraphEdge[] = [];
+    let edgeIndex = 0;
+
+    edgeGroups.forEach((edges) => {
+      // Get the first edge for source/target info
+      const firstEdge = edges[0];
+
+      // Collect all movie information
+      const movieTitles = edges.map(e => e.movie_title);
+      const movieIds = edges.map(e => e.movie_id);
+      const releaseDates = edges.map(e => e.release_date);
+
+      // Create a label that shows first few movies and "+X more" if needed
+      const maxToShow = 3;
+      let label: string;
+      if (movieTitles.length <= maxToShow) {
+        label = movieTitles.join(', ');
+      } else {
+        const shownTitles = movieTitles.slice(0, maxToShow);
+        const remaining = movieTitles.length - maxToShow;
+        label = `${shownTitles.join(', ')}, +${remaining} more`;
+      }
+
+      graphEdges.push({
+        id: `e${edgeIndex++}`,
+        source: firstEdge.Source,
+        target: firstEdge.Target,
+        label: label,
+        movieId: firstEdge.movie_id,
+        releaseDate: firstEdge.release_date,
+        movieIds: movieIds,
+        movieTitles: movieTitles,
+        releaseDates: releaseDates,
+        movieCount: movieTitles.length,
+      });
+    });
+
     console.log('loadGraphData: Edges transformed:', graphEdges.length);
     
     console.log('loadGraphData: Complete!');

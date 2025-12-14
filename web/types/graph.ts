@@ -32,6 +32,11 @@ export interface GraphEdge {
   label: string;
   movieId?: string;
   releaseDate?: string;
+  // Support for combined edges
+  movieIds?: string[];
+  movieTitles?: string[];
+  releaseDates?: string[];
+  movieCount?: number;
 }
 
 export interface GraphData {
