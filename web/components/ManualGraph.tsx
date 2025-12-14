@@ -36,10 +36,14 @@ export default function ManualGraph({
 
   // Cache edge timings to ensure consistency between edge rendering and node timing
   const edgeTimingsCache = useRef<Map<string, { duration: number; delay: number; lineLength: number }>>(new Map());
+  
+  // Cache node timings to ensure consistency across renders
+  const nodeTimingsCache = useRef<Map<string, { duration: number; delay: number }>>(new Map());
 
-  // Reset cache when animation key changes (new actor selected)
+  // Reset caches when animation key changes (new actor selected)
   useEffect(() => {
     edgeTimingsCache.current.clear();
+    nodeTimingsCache.current.clear();
   }, [animationKey]);
 
   // Update container size on mount and resize
@@ -92,19 +96,19 @@ export default function ManualGraph({
       return cached;
     }
 
-    if (!sourceNode.x || !sourceNode.y || !targetNode.x || !targetNode.y) {
+    if (sourceNode.x === undefined || sourceNode.y === undefined || 
+        targetNode.x === undefined || targetNode.y === undefined) {
       return { duration: 0.5, delay: 0, lineLength: 0 };
     }
 
     const lineLength = getLineLength(sourceNode.x, sourceNode.y, targetNode.x, targetNode.y);
 
-    // EXTREMELY WIDE randomization for DRAMATIC variation
-    const baseDuration = Math.min(Math.max(lineLength / 400, 0.2), 0.8);
-    const randomFactor = 0.3 + Math.random() * 3.7; // Random multiplier between 0.3 and 4.0 (13x range!!!)
-    const duration = baseDuration * randomFactor;
+    // Constant speed: pixels per second. Adjust this value to change line drawing speed.
+    const pixelsPerSecond = 600; // Increased for faster line drawing
+    const duration = lineLength / pixelsPerSecond;
 
-    // HUGE random delay for massively staggered start (0 to 1.5s)
-    const delay = Math.random() * 1.5;
+    // Random delay for staggered start (0 to 0.8s) - reduced for quicker start
+    const delay = Math.random() * 0.8;
 
     const timing = { duration, delay, lineLength };
 
@@ -118,36 +122,46 @@ export default function ManualGraph({
   const getNodeAnimationTiming = useCallback((node: GraphNode, index: number) => {
     if (node.id === anchorNodeId) return { delay: 0, duration: 0 };
 
+    // Check cache first
+    const cached = nodeTimingsCache.current.get(node.id);
+    if (cached) {
+      return cached;
+    }
+
     // Find the edge connecting anchor to this node
     const connectingEdge = graphData.edges.find(
       edge => (edge.source === anchorNodeId && edge.target === node.id) ||
               (edge.target === anchorNodeId && edge.source === node.id)
     );
 
+    let delay: number;
+    // Constant bounce duration for all nodes
+    const duration = 0.4; // seconds - reduced for snappier animation
+
     if (!connectingEdge) {
-      // EXTREME random duration for nodes without edges
-      const randomDuration = 0.2 + Math.random() * 1.8; // 0.2s to 2.0s (10x variation!)
-      return { delay: index * 0.08, duration: randomDuration };
+      // Nodes without edges appear with a staggered delay
+      delay = index * 0.1;
+    } else {
+      // Find anchor node
+      const anchor = nodesWithPositions.find(n => n.id === anchorNodeId);
+      if (!anchor || anchor.x === undefined || anchor.y === undefined ||
+          node.x === undefined || node.y === undefined) {
+        delay = index * 0.1;
+      } else {
+        // Get the edge animation timing
+        const edgeTiming = getEdgeAnimationTiming(connectingEdge, anchor, node);
+
+        // Node should start appearing when the line finishes drawing (with total delay)
+        delay = edgeTiming.delay + edgeTiming.duration;
+      }
     }
 
-    // Find anchor node
-    const anchor = nodesWithPositions.find(n => n.id === anchorNodeId);
-    if (!anchor || anchor.x === undefined || anchor.y === undefined ||
-        node.x === undefined || node.y === undefined) {
-      const randomDuration = 0.2 + Math.random() * 1.8;
-      return { delay: index * 0.08, duration: randomDuration };
-    }
+    const timing = { delay, duration };
+    
+    // Cache it!
+    nodeTimingsCache.current.set(node.id, timing);
 
-    // Get the edge animation timing
-    const edgeTiming = getEdgeAnimationTiming(connectingEdge, anchor, node);
-
-    // Node should start appearing when the line finishes drawing (with total delay)
-    const delay = edgeTiming.delay + edgeTiming.duration;
-
-    // EXTREME random duration for node bounce (0.2s to 2.0s)
-    const duration = 0.2 + Math.random() * 1.8;
-
-    return { delay, duration };
+    return timing;
   }, [anchorNodeId, nodesWithPositions, graphData.edges, getEdgeAnimationTiming]);
 
   // Calculate line length for animation
@@ -521,7 +535,6 @@ export default function ManualGraph({
             return (
               <g key={`${edge.id}-${animationKey}`}>
                 <line
-                  className={shouldAnimate ? 'graph-edge-animated' : ''}
                   x1={x1}
                   y1={y1}
                   x2={x2}
@@ -534,8 +547,13 @@ export default function ManualGraph({
                     pointerEvents: 'stroke',
                     strokeDasharray: shouldAnimate ? lineLength : undefined,
                     strokeDashoffset: shouldAnimate ? lineLength : undefined,
-                    animationDuration: shouldAnimate ? `${timing.duration}s` : undefined,
-                    animationDelay: shouldAnimate ? `${timing.delay}s` : undefined,
+                    ...(shouldAnimate ? {
+                      animationName: 'drawLine',
+                      animationDuration: `${timing.duration}s`,
+                      animationTimingFunction: 'cubic-bezier(0.65, 0, 0.35, 1)',
+                      animationDelay: `${timing.delay}s`,
+                      animationFillMode: 'forwards',
+                    } : {}),
                     transition: 'stroke 0.3s ease, stroke-width 0.3s ease',
                   }}
                   onClick={(e) => {
@@ -610,10 +628,12 @@ export default function ManualGraph({
                 key={`${node.id}-${animationKey}`}
                 className={nodeClasses}
                 style={{
-                  animationDelay: !isAnchor && anchorNodeId ? `${nodeTiming.delay}s` : undefined,
-                  animationDuration: !isAnchor && anchorNodeId ? `${nodeTiming.duration}s` : undefined,
+                  animation: !isAnchor && anchorNodeId 
+                    ? `fadeInBounce ${nodeTiming.duration}s cubic-bezier(0.34, 1.56, 0.64, 1) ${nodeTiming.delay}s forwards`
+                    : undefined,
                   filter: dropShadow,
                   transformOrigin: `${node.x}px ${node.y}px`,
+                  opacity: !isAnchor && anchorNodeId ? 0 : undefined,
                 }}
               >
                 {/* Node circle with gradient overlay */}
