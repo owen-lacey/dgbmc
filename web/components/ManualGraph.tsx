@@ -310,11 +310,20 @@ export default function ManualGraph({
       Math.min(config.maxZoom, viewport.zoom * zoomFactor)
     );
 
-    // Zoom towards mouse position
-    const zoomChange = newZoom / viewport.zoom;
+    // Convert mouse position from screen coordinates to world coordinates
+    // The transform is: translate(viewport.x, viewport.y) scale(viewport.zoom)
+    // So to convert screen to world: (screen - viewport) / zoom
+    const worldX = (mouseX - viewport.x) / viewport.zoom;
+    const worldY = (mouseY - viewport.y) / viewport.zoom;
+
+    // Convert back to screen coordinates with new zoom
+    // World to screen: world * newZoom + newViewport
+    // We want the world point to stay under the mouse, so:
+    // mouseX = worldX * newZoom + newViewportX
+    // newViewportX = mouseX - worldX * newZoom
     setViewport(prev => ({
-      x: mouseX - (mouseX - prev.x) * zoomChange,
-      y: mouseY - (mouseY - prev.y) * zoomChange,
+      x: mouseX - worldX * newZoom,
+      y: mouseY - worldY * newZoom,
       zoom: newZoom,
     }));
   }, [viewport, config]);
