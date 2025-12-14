@@ -34,6 +34,14 @@ export default function ManualGraph({
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [animationKey, setAnimationKey] = useState(0);
 
+  // Cache edge timings to ensure consistency between edge rendering and node timing
+  const edgeTimingsCache = useRef<Map<string, { duration: number; delay: number; lineLength: number }>>(new Map());
+
+  // Reset cache when animation key changes (new actor selected)
+  useEffect(() => {
+    edgeTimingsCache.current.clear();
+  }, [animationKey]);
+
   // Update container size on mount and resize
   useEffect(() => {
     const container = containerRef.current;
@@ -76,10 +84,16 @@ export default function ManualGraph({
     }
   }, [graphData, containerSize]);
 
-  // Calculate animation timing for edges and nodes
+  // Calculate animation timing for edges and nodes - CACHED to ensure consistency
   const getEdgeAnimationTiming = useCallback((edge: GraphEdge, sourceNode: GraphNode, targetNode: GraphNode) => {
+    // Check cache first
+    const cached = edgeTimingsCache.current.get(edge.id);
+    if (cached) {
+      return cached;
+    }
+
     if (!sourceNode.x || !sourceNode.y || !targetNode.x || !targetNode.y) {
-      return { duration: 0.5, delay: 0 };
+      return { duration: 0.5, delay: 0, lineLength: 0 };
     }
 
     const lineLength = getLineLength(sourceNode.x, sourceNode.y, targetNode.x, targetNode.y);
@@ -92,7 +106,12 @@ export default function ManualGraph({
     // HUGE random delay for massively staggered start (0 to 1.5s)
     const delay = Math.random() * 1.5;
 
-    return { duration, delay, lineLength };
+    const timing = { duration, delay, lineLength };
+
+    // Cache it!
+    edgeTimingsCache.current.set(edge.id, timing);
+
+    return timing;
   }, []);
 
   // Calculate animation delays for nodes - they should appear AFTER their connecting line finishes
