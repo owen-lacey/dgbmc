@@ -84,13 +84,13 @@ export default function ManualGraph({
 
     const lineLength = getLineLength(sourceNode.x, sourceNode.y, targetNode.x, targetNode.y);
 
-    // Base duration on line length with randomization
-    const baseDuration = Math.min(Math.max(lineLength / 400, 0.4), 1.2);
-    const randomFactor = 0.7 + Math.random() * 0.6; // Random multiplier between 0.7 and 1.3
+    // Base duration on line length with WIDE randomization for dramatic variation
+    const baseDuration = Math.min(Math.max(lineLength / 400, 0.3), 1.0);
+    const randomFactor = 0.5 + Math.random() * 1.5; // Random multiplier between 0.5 and 2.0 (4x range!)
     const duration = baseDuration * randomFactor;
 
-    // Random delay for staggered start (0 to 0.3s)
-    const delay = Math.random() * 0.3;
+    // Random delay for highly staggered start (0 to 0.6s)
+    const delay = Math.random() * 0.6;
 
     return { duration, delay, lineLength };
   }, []);
@@ -106,8 +106,8 @@ export default function ManualGraph({
     );
 
     if (!connectingEdge) {
-      // Random duration and delay for nodes without edges
-      const randomDuration = 0.4 + Math.random() * 0.4; // 0.4s to 0.8s
+      // Random duration and delay for nodes without edges - wide variation
+      const randomDuration = 0.3 + Math.random() * 0.7; // 0.3s to 1.0s
       return { delay: index * 0.08, duration: randomDuration };
     }
 
@@ -115,7 +115,7 @@ export default function ManualGraph({
     const anchor = nodesWithPositions.find(n => n.id === anchorNodeId);
     if (!anchor || anchor.x === undefined || anchor.y === undefined ||
         node.x === undefined || node.y === undefined) {
-      const randomDuration = 0.4 + Math.random() * 0.4;
+      const randomDuration = 0.3 + Math.random() * 0.7;
       return { delay: index * 0.08, duration: randomDuration };
     }
 
@@ -125,8 +125,8 @@ export default function ManualGraph({
     // Node should start appearing when the line finishes drawing (with total delay)
     const delay = edgeTiming.delay + edgeTiming.duration;
 
-    // Random duration for node bounce (0.4s to 0.8s)
-    const duration = 0.4 + Math.random() * 0.4;
+    // Random duration for node bounce with WIDE variation (0.3s to 1.0s)
+    const duration = 0.3 + Math.random() * 0.7;
 
     return { delay, duration };
   }, [anchorNodeId, nodesWithPositions, graphData.edges, getEdgeAnimationTiming]);
