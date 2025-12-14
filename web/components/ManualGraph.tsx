@@ -76,28 +76,51 @@ export default function ManualGraph({
     }
   }, [graphData, containerSize]);
 
-  // Calculate animation delays based on distance from anchor
-  const getAnimationDelay = useCallback((node: GraphNode, index: number) => {
-    if (node.id === anchorNodeId) return 0;
+  // Calculate animation timing for edges and nodes
+  const getEdgeAnimationTiming = useCallback((edge: GraphEdge, sourceNode: GraphNode, targetNode: GraphNode) => {
+    if (!sourceNode.x || !sourceNode.y || !targetNode.x || !targetNode.y) {
+      return { duration: 0.5, delay: 0 };
+    }
+
+    const lineLength = getLineLength(sourceNode.x, sourceNode.y, targetNode.x, targetNode.y);
+    const duration = Math.min(Math.max(lineLength / 400, 0.4), 1.2); // Between 0.4s and 1.2s
+
+    // Start all edges from anchor immediately
+    const delay = 0;
+
+    return { duration, delay, lineLength };
+  }, []);
+
+  // Calculate animation delays for nodes - they should appear AFTER their connecting line finishes
+  const getNodeAnimationTiming = useCallback((node: GraphNode, index: number) => {
+    if (node.id === anchorNodeId) return { delay: 0, duration: 0 };
+
+    // Find the edge connecting anchor to this node
+    const connectingEdge = graphData.edges.find(
+      edge => (edge.source === anchorNodeId && edge.target === node.id) ||
+              (edge.target === anchorNodeId && edge.source === node.id)
+    );
+
+    if (!connectingEdge) {
+      return { delay: index * 0.08, duration: 0.6 };
+    }
 
     // Find anchor node
     const anchor = nodesWithPositions.find(n => n.id === anchorNodeId);
     if (!anchor || anchor.x === undefined || anchor.y === undefined ||
         node.x === undefined || node.y === undefined) {
-      // Fallback to index-based staggering
-      return index * 0.08;
+      return { delay: index * 0.08, duration: 0.6 };
     }
 
-    // Calculate distance from anchor
-    const distance = Math.sqrt(
-      Math.pow(node.x - anchor.x, 2) + Math.pow(node.y - anchor.y, 2)
-    );
+    // Get the edge animation timing
+    const edgeTiming = getEdgeAnimationTiming(connectingEdge, anchor, node);
 
-    // Base delay on distance, with some randomization for visual interest
-    const baseDelay = Math.min(distance / 200, 2);
-    const jitter = (Math.random() - 0.5) * 0.1;
-    return baseDelay + jitter;
-  }, [anchorNodeId, nodesWithPositions]);
+    // Node should start appearing when the line finishes drawing
+    const delay = edgeTiming.duration;
+    const duration = 0.6;
+
+    return { delay, duration };
+  }, [anchorNodeId, nodesWithPositions, graphData.edges, getEdgeAnimationTiming]);
 
   // Calculate line length for animation
   const getLineLength = (x1: number, y1: number, x2: number, y2: number) => {
@@ -451,17 +474,21 @@ export default function ManualGraph({
             const isSelected = interaction.selectedEdgeId === edge.id;
             const edgeStyle = (isHovered || isSelected) ? config.hoveredEdge : config.edge;
 
-            const x1 = sourceNode.x;
-            const y1 = sourceNode.y;
-            const x2 = targetNode.x;
-            const y2 = targetNode.y;
-
-            const lineLength = getLineLength(x1, y1, x2, y2);
-            const animationDuration = Math.min(lineLength / 300, 1.5);
-            const delay = getAnimationDelay(targetNode, index);
-
             // Only animate if there's an anchor and this edge connects to it
             const shouldAnimate = anchorNodeId && (edge.source === anchorNodeId || edge.target === anchorNodeId);
+
+            // Determine which end is the anchor to draw FROM anchor TO other node
+            const isSourceAnchor = edge.source === anchorNodeId;
+            const anchorNode = isSourceAnchor ? sourceNode : targetNode;
+            const otherNode = isSourceAnchor ? targetNode : sourceNode;
+
+            const x1 = anchorNode.x!;
+            const y1 = anchorNode.y!;
+            const x2 = otherNode.x!;
+            const y2 = otherNode.y!;
+
+            const timing = getEdgeAnimationTiming(edge, anchorNode, otherNode);
+            const lineLength = timing.lineLength || getLineLength(x1, y1, x2, y2);
 
             return (
               <g key={`${edge.id}-${animationKey}`}>
@@ -477,8 +504,10 @@ export default function ManualGraph({
                   style={{
                     cursor: 'pointer',
                     pointerEvents: 'stroke',
-                    animationDuration: shouldAnimate ? `${animationDuration}s` : undefined,
-                    animationDelay: shouldAnimate ? `${delay}s` : undefined,
+                    strokeDasharray: shouldAnimate ? lineLength : undefined,
+                    strokeDashoffset: shouldAnimate ? lineLength : undefined,
+                    animationDuration: shouldAnimate ? `${timing.duration}s` : undefined,
+                    animationDelay: shouldAnimate ? `${timing.delay}s` : undefined,
                     transition: 'stroke 0.3s ease, stroke-width 0.3s ease',
                   }}
                   onClick={(e) => {
@@ -534,7 +563,7 @@ export default function ManualGraph({
             }
 
             const radius = style.size / 2;
-            const animationDelay = getAnimationDelay(node, index);
+            const nodeTiming = getNodeAnimationTiming(node, index);
 
             // Calculate box shadow based on state
             let dropShadow = 'drop-shadow(0 2px 8px rgba(0,0,0,0.15))';
@@ -553,8 +582,8 @@ export default function ManualGraph({
                 key={`${node.id}-${animationKey}`}
                 className={nodeClasses}
                 style={{
-                  animationDelay: !isAnchor && anchorNodeId ? `${animationDelay}s` : undefined,
-                  animationDuration: !isAnchor && anchorNodeId ? '0.8s' : undefined,
+                  animationDelay: !isAnchor && anchorNodeId ? `${nodeTiming.delay}s` : undefined,
+                  animationDuration: !isAnchor && anchorNodeId ? `${nodeTiming.duration}s` : undefined,
                   filter: dropShadow,
                   transformOrigin: `${node.x}px ${node.y}px`,
                 }}
