@@ -3,10 +3,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { loadGraphData } from '@/lib/data-loader';
 import { getGraphConfig } from '@/lib/graph-config';
+import { useTheme } from './ThemeProvider';
 import ManualGraph from './ManualGraph';
 import { GraphData } from '@/types/graph';
 
 export default function Graph() {
+  const { resolvedTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [graphData, setGraphData] = useState<GraphData | null>(null);
@@ -59,24 +61,24 @@ export default function Graph() {
       {graphData && !loading && !error && (
         <ManualGraph
           graphData={graphData}
-          config={getGraphConfig()}
+          config={getGraphConfig(resolvedTheme === 'dark')}
           onNodeClick={handleNodeClick}
           onEdgeClick={handleEdgeClick}
         />
       )}
-      
+
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-900 z-10">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading graph...</p>
+            <p className="text-gray-600 dark:text-gray-400">Loading graph...</p>
           </div>
         </div>
       )}
-      
+
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
-          <div className="text-center text-red-600">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-900 z-10">
+          <div className="text-center text-red-600 dark:text-red-400">
             <p className="text-xl font-semibold mb-2">Error</p>
             <p>{error}</p>
           </div>

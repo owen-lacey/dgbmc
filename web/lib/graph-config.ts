@@ -31,7 +31,7 @@ export interface GraphConfig {
   wheelSensitivity: number;
 }
 
-// Memoized config objects to prevent unnecessary re-renders
+// Light theme config
 const graphConfigCache: GraphConfig = {
   node: {
     backgroundColor: '#4A90E2',
@@ -82,6 +82,64 @@ const graphConfigCache: GraphConfig = {
     fontSize: 10,
     textColor: '#666',
     textOutlineColor: '#fff',
+    textOutlineWidth: 1,
+  },
+  minZoom: 0.1,
+  maxZoom: 3,
+  wheelSensitivity: 0.05,
+};
+
+// Dark theme config
+const graphConfigDarkCache: GraphConfig = {
+  node: {
+    backgroundColor: '#60A5FA',
+    borderColor: '#60A5FA',
+    borderWidth: 0,
+    size: 30,
+    fontSize: 12,
+    fontWeight: 'normal',
+    textColor: '#E5E7EB',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 2,
+  },
+  anchorNode: {
+    backgroundColor: '#60A5FA',
+    borderColor: '#60A5FA',
+    borderWidth: 0,
+    size: 30,
+    fontSize: 12,
+    fontWeight: 'normal',
+    textColor: '#E5E7EB',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 2,
+  },
+  hoveredNode: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#2563EB',
+    borderWidth: 3,
+    size: 30,
+    fontSize: 12,
+    fontWeight: 'normal',
+    textColor: '#E5E7EB',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 2,
+  },
+  edge: {
+    color: '#4B5563',
+    width: 2,
+    opacity: 0.6,
+    fontSize: 10,
+    textColor: '#9CA3AF',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 1,
+  },
+  hoveredEdge: {
+    color: '#6B7280',
+    width: 3,
+    opacity: 1,
+    fontSize: 10,
+    textColor: '#9CA3AF',
+    textOutlineColor: '#1F2937',
     textOutlineWidth: 1,
   },
   minZoom: 0.1,
@@ -146,6 +204,65 @@ const anchorGraphConfigCache: GraphConfig = {
   wheelSensitivity: 0.05,
 };
 
-export const getGraphConfig = (): GraphConfig => graphConfigCache;
+const anchorGraphConfigDarkCache: GraphConfig = {
+  node: {
+    backgroundColor: '#60A5FA',
+    borderColor: '#60A5FA',
+    borderWidth: 0,
+    size: 30,
+    fontSize: 12,
+    fontWeight: 'normal',
+    textColor: '#E5E7EB',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 2,
+  },
+  anchorNode: {
+    backgroundColor: '#F87171',
+    borderColor: '#DC2626',
+    borderWidth: 3,
+    size: 50,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textColor: '#E5E7EB',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 2,
+  },
+  hoveredNode: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#2563EB',
+    borderWidth: 3,
+    size: 30,
+    fontSize: 12,
+    fontWeight: 'normal',
+    textColor: '#E5E7EB',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 2,
+  },
+  edge: {
+    color: '#4B5563',
+    width: 2,
+    opacity: 0.6,
+    fontSize: 10,
+    textColor: '#9CA3AF',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 1,
+  },
+  hoveredEdge: {
+    color: '#6B7280',
+    width: 3,
+    opacity: 1,
+    fontSize: 10,
+    textColor: '#9CA3AF',
+    textOutlineColor: '#1F2937',
+    textOutlineWidth: 1,
+  },
+  minZoom: 0.1,
+  maxZoom: 3,
+  wheelSensitivity: 0.05,
+};
 
-export const getAnchorGraphConfig = (): GraphConfig => anchorGraphConfigCache;
+export const getGraphConfig = (isDark = false): GraphConfig =>
+  isDark ? graphConfigDarkCache : graphConfigCache;
+
+export const getAnchorGraphConfig = (isDark = false): GraphConfig =>
+  isDark ? anchorGraphConfigDarkCache : anchorGraphConfigCache;

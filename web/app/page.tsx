@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AnchorGraph from '@/components/AnchorGraph';
 import ActorDropdown from '@/components/ActorDropdown';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { loadGraphData, getActorList, findActorIdByName, ActorOption } from '@/lib/data-loader';
 
 export default function Home() {
@@ -60,10 +61,10 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-screen h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading actors...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading actors...</p>
         </div>
       </div>
     );
@@ -71,8 +72,8 @@ export default function Home() {
 
   if (!selectedActorId) {
     return (
-      <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center text-red-600">
+      <div className="w-screen h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center text-red-600 dark:text-red-400">
           <p className="text-xl font-semibold mb-2">Error</p>
           <p>Could not find actor</p>
         </div>
@@ -82,6 +83,7 @@ export default function Home() {
 
   return (
     <div className="w-screen h-screen overflow-hidden relative">
+      <ThemeToggle />
       <ActorDropdown
         actors={actors}
         selectedActorId={selectedActorId}
@@ -90,7 +92,7 @@ export default function Home() {
       <AnchorGraph anchorActorId={selectedActorId} />
       <a
         href="/full-graph"
-        className="absolute top-4 right-4 z-10 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-colors"
+        className="absolute top-4 right-20 z-10 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-colors"
       >
         Full Graph
       </a>
