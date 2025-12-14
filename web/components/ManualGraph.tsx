@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { GraphData, GraphNode, GraphEdge, ViewportTransform, InteractionState } from '@/types/graph';
 import { GraphConfig } from '@/lib/graph-config';
-import { calculateCircularLayout, applyPositionsToNodes } from '@/lib/layout';
 
 interface ManualGraphProps {
   graphData: GraphData;
@@ -31,7 +30,6 @@ export default function ManualGraph({
   });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [animationKey, setAnimationKey] = useState(0);
 
   // Cache edge timings to ensure consistency between edge rendering and node timing
@@ -46,21 +44,6 @@ export default function ManualGraph({
     nodeTimingsCache.current.clear();
   }, [animationKey]);
 
-  // Update container size on mount and resize
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const updateSize = () => {
-      const rect = container.getBoundingClientRect();
-      setContainerSize({ width: rect.width, height: rect.height });
-    };
-
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-
   // Reset animations when anchor changes
   useEffect(() => {
     setAnimationKey(prev => prev + 1);
@@ -70,23 +53,15 @@ export default function ManualGraph({
   const nodesWithPositions = useMemo(() => {
     if (graphData.nodes.length === 0) return [];
 
-    // If nodes already have positions (from preset layout), use them
-    const hasPresetPositions = graphData.nodes.some(n => n.x !== undefined && n.y !== undefined);
+    // All nodes must have preset positions
+    const hasPresetPositions = graphData.nodes.every(n => n.x !== undefined && n.y !== undefined);
 
-    if (hasPresetPositions) {
-      return graphData.nodes;
-    } else {
-      // Calculate circular layout only if container is ready
-      if (containerSize.width === 0 || containerSize.height === 0) {
-        return graphData.nodes;
-      }
-      const positions = calculateCircularLayout(graphData.nodes, {
-        centerX: containerSize.width / 2,
-        centerY: containerSize.height / 2,
-      });
-      return applyPositionsToNodes(graphData.nodes, positions);
+    if (!hasPresetPositions) {
+      throw new Error('ManualGraph requires all nodes to have preset positions (x and y coordinates)');
     }
-  }, [graphData, containerSize]);
+
+    return graphData.nodes;
+  }, [graphData]);
 
   // Calculate animation timing for edges and nodes - CACHED to ensure consistency
   const getEdgeAnimationTiming = useCallback((edge: GraphEdge, sourceNode: GraphNode, targetNode: GraphNode) => {
@@ -573,7 +548,11 @@ export default function ManualGraph({
                       textAnchor="middle"
                       stroke={edgeStyle.textOutlineColor}
                       strokeWidth={edgeStyle.textOutlineWidth * 2}
-                      style={{ pointerEvents: 'none' }}
+                      style={{
+                        pointerEvents: 'none',
+                        animation: 'fadeIn 0.3s ease-in forwards',
+                        opacity: 0,
+                      }}
                     >
                       {edge.label}
                     </text>
@@ -583,7 +562,11 @@ export default function ManualGraph({
                       fontSize={edgeStyle.fontSize}
                       fill={edgeStyle.textColor}
                       textAnchor="middle"
-                      style={{ pointerEvents: 'none' }}
+                      style={{
+                        pointerEvents: 'none',
+                        animation: 'fadeIn 0.3s ease-in forwards',
+                        opacity: 0,
+                      }}
                     >
                       {edge.label}
                     </text>
@@ -619,8 +602,7 @@ export default function ManualGraph({
 
             const nodeClasses = [
               'graph-node',
-              isAnchor ? 'graph-node-anchor' : '',
-              !isAnchor && anchorNodeId ? 'graph-node-animated' : '',
+              isAnchor ? 'graph-node-anchor' : ''
             ].filter(Boolean).join(' ');
 
             return (

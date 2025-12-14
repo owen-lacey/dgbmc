@@ -88,12 +88,6 @@ function HomeContent() {
         onActorChange={handleActorChange}
       />
       <AnchorGraph anchorActorId={selectedActorId} />
-      <a
-        href="/full-graph"
-        className="absolute top-4 right-4 z-10 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-colors"
-      >
-        Full Graph
-      </a>
     </div>
   );
 }

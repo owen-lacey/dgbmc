@@ -45,11 +45,6 @@ export interface ViewportTransform {
   zoom: number;
 }
 
-export interface NodePosition {
-  x: number;
-  y: number;
-}
-
 export interface InteractionState {
   hoveredNodeId: string | null;
   hoveredEdgeId: string | null;

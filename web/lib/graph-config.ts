@@ -31,64 +31,7 @@ export interface GraphConfig {
   wheelSensitivity: number;
 }
 
-// Memoized config objects to prevent unnecessary re-renders
-const graphConfigCache: GraphConfig = {
-  node: {
-    backgroundColor: '#4A90E2',
-    borderColor: '#4A90E2',
-    borderWidth: 0,
-    size: 30,
-    fontSize: 12,
-    fontWeight: 'normal',
-    textColor: '#333',
-    textOutlineColor: '#fff',
-    textOutlineWidth: 2,
-  },
-  anchorNode: {
-    backgroundColor: '#4A90E2',
-    borderColor: '#4A90E2',
-    borderWidth: 0,
-    size: 30,
-    fontSize: 12,
-    fontWeight: 'normal',
-    textColor: '#333',
-    textOutlineColor: '#fff',
-    textOutlineWidth: 2,
-  },
-  hoveredNode: {
-    backgroundColor: '#2171D6',
-    borderColor: '#1557B0',
-    borderWidth: 3,
-    size: 30,
-    fontSize: 12,
-    fontWeight: 'normal',
-    textColor: '#333',
-    textOutlineColor: '#fff',
-    textOutlineWidth: 2,
-  },
-  edge: {
-    color: '#ccc',
-    width: 2,
-    opacity: 0.6,
-    fontSize: 10,
-    textColor: '#666',
-    textOutlineColor: '#fff',
-    textOutlineWidth: 1,
-  },
-  hoveredEdge: {
-    color: '#888',
-    width: 3,
-    opacity: 1,
-    fontSize: 10,
-    textColor: '#666',
-    textOutlineColor: '#fff',
-    textOutlineWidth: 1,
-  },
-  minZoom: 0.1,
-  maxZoom: 3,
-  wheelSensitivity: 0.05,
-};
-
+// Memoized config object to prevent unnecessary re-renders
 const anchorGraphConfigCache: GraphConfig = {
   node: {
     backgroundColor: '#4A90E2',
@@ -130,7 +73,7 @@ const anchorGraphConfigCache: GraphConfig = {
     fontSize: 10,
     textColor: '#666',
     textOutlineColor: '#fff',
-    textOutlineWidth: 1,
+    textOutlineWidth: 2,
   },
   hoveredEdge: {
     color: '#888',
@@ -139,13 +82,11 @@ const anchorGraphConfigCache: GraphConfig = {
     fontSize: 10,
     textColor: '#666',
     textOutlineColor: '#fff',
-    textOutlineWidth: 1,
+    textOutlineWidth: 2,
   },
   minZoom: 0.1,
   maxZoom: 3,
   wheelSensitivity: 0.05,
 };
-
-export const getGraphConfig = (): GraphConfig => graphConfigCache;
 
 export const getAnchorGraphConfig = (): GraphConfig => anchorGraphConfigCache;
