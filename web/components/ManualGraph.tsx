@@ -38,6 +38,9 @@ export default function ManualGraph({
   // Cache node timings to ensure consistency across renders
   const nodeTimingsCache = useRef<Map<string, { duration: number; delay: number }>>(new Map());
 
+  // Track animation frame for smooth centering
+  const animationFrameRef = useRef<number | null>(null);
+
   // Reset caches when animation key changes (new actor selected)
   useEffect(() => {
     edgeTimingsCache.current.clear();
@@ -62,6 +65,84 @@ export default function ManualGraph({
 
     return graphData.nodes;
   }, [graphData]);
+
+  // Center anchor node on screen when component mounts or anchor changes (with smooth animation)
+  useEffect(() => {
+    if (!anchorNodeId || !containerRef.current || !svgRef.current) return;
+
+    const anchorNode = nodesWithPositions.find(n => n.id === anchorNodeId);
+    if (!anchorNode || anchorNode.x === undefined || anchorNode.y === undefined) return;
+
+    // Cancel any ongoing animation
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    const container = containerRef.current;
+    const centerX = container.clientWidth / 2;
+    const centerY = container.clientHeight / 2;
+
+    // Target zoom level (reset to 1)
+    const targetZoom = 1;
+
+    // Calculate target viewport position to center the anchor node
+    // World to screen: screen = world * zoom + viewport
+    // We want: centerX = anchorNode.x * zoom + viewport.x
+    // So: viewport.x = centerX - anchorNode.x * zoom
+    const targetX = centerX - anchorNode.x! * targetZoom;
+    const targetY = centerY - anchorNode.y! * targetZoom;
+
+    // Capture start values once before animation begins
+    // We intentionally read viewport here to capture its state at animation start
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const startX = viewport.x;
+    const startY = viewport.y;
+    const startZoom = viewport.zoom;
+
+    // Animation parameters
+    const duration = 800; // milliseconds
+    const startTime = performance.now();
+
+    // Smooth easing function (ease-in-out-cubic)
+    const easeInOutCubic = (t: number): number => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+
+    // Animation loop
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeInOutCubic(progress);
+
+      // Interpolate viewport values
+      const currentX = startX + (targetX - startX) * eased;
+      const currentY = startY + (targetY - startY) * eased;
+      const currentZoom = startZoom + (targetZoom - startZoom) * eased;
+
+      setViewport({
+        x: currentX,
+        y: currentY,
+        zoom: currentZoom,
+      });
+
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+      } else {
+        animationFrameRef.current = null;
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
+
+    // Cleanup: cancel animation on unmount or when dependencies change
+    return () => {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [anchorNodeId, nodesWithPositions]);
 
   // Calculate animation timing for edges and nodes - CACHED to ensure consistency
   const getEdgeAnimationTiming = useCallback((edge: GraphEdge, sourceNode: GraphNode, targetNode: GraphNode) => {
@@ -310,11 +391,20 @@ export default function ManualGraph({
       Math.min(config.maxZoom, viewport.zoom * zoomFactor)
     );
 
-    // Zoom towards mouse position
-    const zoomChange = newZoom / viewport.zoom;
+    // Convert mouse position from screen coordinates to world coordinates
+    // The transform is: translate(viewport.x, viewport.y) scale(viewport.zoom)
+    // So to convert screen to world: (screen - viewport) / zoom
+    const worldX = (mouseX - viewport.x) / viewport.zoom;
+    const worldY = (mouseY - viewport.y) / viewport.zoom;
+
+    // Convert back to screen coordinates with new zoom
+    // World to screen: world * newZoom + newViewport
+    // We want the world point to stay under the mouse, so:
+    // mouseX = worldX * newZoom + newViewportX
+    // newViewportX = mouseX - worldX * newZoom
     setViewport(prev => ({
-      x: mouseX - (mouseX - prev.x) * zoomChange,
-      y: mouseY - (mouseY - prev.y) * zoomChange,
+      x: mouseX - worldX * newZoom,
+      y: mouseY - worldY * newZoom,
       zoom: newZoom,
     }));
   }, [viewport, config]);
