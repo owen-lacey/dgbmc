@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 import { Actor, MovieEdge, GraphData, GraphNode, GraphEdge } from '@/types/graph';
-import { getDataPaths } from './config';
+import { getDataPaths, HIDE_NON_ACTORS } from './config';
 
 // Cache for graph data to prevent multiple loads
 let graphDataCache: GraphData | null = null;
@@ -45,22 +45,32 @@ export async function loadGraphData(): Promise<GraphData> {
     });
 
     // Transform nodes to graph format
-    const graphNodes: GraphNode[] = nodesParsed.data.map((actor) => ({
+    // Note: CSV parses "True"/"False" as strings, so we need to convert
+    let graphNodes: GraphNode[] = nodesParsed.data.map((actor) => ({
       id: actor.id,
       label: actor.name,
       recognizability: actor.Recognizability,
       movieCount: actor.movie_count,
+      bestKnownForActing: actor.best_known_for_acting === true || actor.best_known_for_acting === 'True',
     }));
 
+    // Filter out non-actors if configured
+    if (HIDE_NON_ACTORS) {
+      graphNodes = graphNodes.filter(node => node.bestKnownForActing !== false);
+    }
+
     // Transform edges to graph format
-    const graphEdges: GraphEdge[] = edgesParsed.data.map((edge, index) => ({
-      id: `e${index}`,
-      source: edge.Source,
-      target: edge.Target,
-      label: edge.movie_title,
-      movieId: edge.movie_id,
-      releaseDate: edge.release_date,
-    }));
+    const nodeIds = new Set(graphNodes.map(node => node.id));
+    const graphEdges: GraphEdge[] = edgesParsed.data
+      .filter(edge => nodeIds.has(edge.Source) && nodeIds.has(edge.Target))
+      .map((edge, index) => ({
+        id: `e${index}`,
+        source: edge.Source,
+        target: edge.Target,
+        label: edge.movie_title,
+        movieId: edge.movie_id,
+        releaseDate: edge.release_date,
+      }));
 
     const result = {
       nodes: graphNodes,

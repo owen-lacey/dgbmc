@@ -13,6 +13,14 @@ export const RECOGNIZABILITY = parseInt(
 );
 
 /**
+ * Whether to hide actors who are not best known for acting
+ * (e.g., singers, athletes, TV personalities who have appeared in movies)
+ * Defaults to false (show all actors)
+ * Can be overridden with NEXT_PUBLIC_HIDE_NON_ACTORS environment variable
+ */
+export const HIDE_NON_ACTORS = process.env.NEXT_PUBLIC_HIDE_NON_ACTORS === 'true';
+
+/**
  * Generate CSV file paths based on recognizability level
  */
 export function getDataPaths() {

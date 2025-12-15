@@ -4,6 +4,7 @@ export interface Actor {
   type: string;
   Recognizability: number;
   movie_count: number;
+  best_known_for_acting: boolean | string;  // CSV may parse as string "True"/"False"
 }
 
 export interface MovieEdge {
@@ -21,6 +22,7 @@ export interface GraphNode {
   label: string;
   recognizability?: number;
   movieCount?: number;
+  bestKnownForActing?: boolean;
   x?: number;
   y?: number;
 }
