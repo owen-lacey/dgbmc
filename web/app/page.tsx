@@ -83,13 +83,21 @@ function HomeContent() {
 
   return (
     <div className="w-screen h-screen overflow-hidden relative">
-      <ThemeToggle />
       <ActorDropdown
         actors={actors}
         selectedActorId={selectedActorId}
         onActorChange={handleActorChange}
       />
       <AnchorGraph anchorActorId={selectedActorId} />
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-3">
+        <a
+          href="/full-graph"
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition-colors"
+        >
+          Full Graph
+        </a>
+        <ThemeToggle />
+      </div>
     </div>
   );
 }
