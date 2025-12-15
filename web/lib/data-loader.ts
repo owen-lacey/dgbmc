@@ -102,11 +102,11 @@ export async function loadGraphData(): Promise<GraphData> {
       const maxToShow = 3;
       let label: string;
       if (movieTitles.length <= maxToShow) {
-        label = movieTitles.join(', ');
+        label = movieTitles.join('\n');
       } else {
         const shownTitles = movieTitles.slice(0, maxToShow);
         const remaining = movieTitles.length - maxToShow;
-        label = `${shownTitles.join(', ')}, +${remaining} more`;
+        label = `${shownTitles.join('\n')}\n+${remaining} more`;
       }
 
       graphEdges.push({
