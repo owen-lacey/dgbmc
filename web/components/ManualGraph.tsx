@@ -22,6 +22,7 @@ export default function ManualGraph({
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewport, setViewport] = useState<ViewportTransform>({ x: 0, y: 0, zoom: 1 });
+  const [hasInitializedViewport, setHasInitializedViewport] = useState(false);
   const [interaction, setInteraction] = useState<InteractionState>({
     hoveredNodeId: null,
     hoveredEdgeId: null,
@@ -66,7 +67,9 @@ export default function ManualGraph({
     return graphData.nodes;
   }, [graphData]);
 
-  // Center anchor node on screen when component mounts or anchor changes (with smooth animation)
+  // Center anchor node on screen when component mounts or anchor changes
+  // On first render: set viewport immediately (no animation)
+  // On subsequent anchor changes: animate smoothly
   useEffect(() => {
     if (!anchorNodeId || !containerRef.current || !svgRef.current) return;
 
@@ -92,6 +95,17 @@ export default function ManualGraph({
     // So: viewport.x = centerX - anchorNode.x * zoom
     const targetX = centerX - anchorNode.x! * targetZoom;
     const targetY = centerY - anchorNode.y! * targetZoom;
+
+    // On first render, set viewport immediately without animation
+    if (!hasInitializedViewport) {
+      setViewport({
+        x: targetX,
+        y: targetY,
+        zoom: targetZoom,
+      });
+      setHasInitializedViewport(true);
+      return;
+    }
 
     // Capture start values once before animation begins
     // We intentionally read viewport here to capture its state at animation start
@@ -142,7 +156,7 @@ export default function ManualGraph({
         animationFrameRef.current = null;
       }
     };
-  }, [anchorNodeId, nodesWithPositions]);
+  }, [anchorNodeId, nodesWithPositions, hasInitializedViewport]);
 
   // Calculate animation timing for edges and nodes - CACHED to ensure consistency
   const getEdgeAnimationTiming = useCallback((edge: GraphEdge, sourceNode: GraphNode, targetNode: GraphNode) => {
