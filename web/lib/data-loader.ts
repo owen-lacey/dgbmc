@@ -117,6 +117,17 @@ export function findActorIdByName(graphData: GraphData, name: string): string | 
   return node?.id;
 }
 
+function randomGaussian(mean = 0, stdDev = 1) {
+  // Box-Muller transform
+  const u1 = Math.random();
+  const u2 = Math.random();
+  
+  const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+  
+  return z0 * stdDev + mean;
+}
+
+
 export function filterGraphDataByAnchor(graphData: GraphData, anchorId: string): GraphData {
   // Find all edges connected to the anchor
   const connectedEdges = graphData.edges.filter(
@@ -156,22 +167,48 @@ export function filterGraphDataByAnchor(graphData: GraphData, anchorId: string):
     });
   }
   
-  // Position costars in a grid
-  const cols = Math.ceil(Math.sqrt(costarNodes.length));
-  const spacing = 200; // pixels between nodes
+  const spacing = 10; // pixels between nodes
+
+  // Ordered list of angles around the circle
+  let existingThetas: number[] = [];
   
   costarNodes.forEach((node, index) => {
-    const row = Math.floor(index / cols);
-    const col = index % cols;
-    
-    // Offset grid to avoid overlap with center
-    const offsetX = (col - (cols - 1) / 2) * spacing;
-    const offsetY = (row + 1.5) * spacing; // Start below center
-    
+    const radius = 100 + (index + 1 ) * spacing;
+    // find the index of the theta with the biggest gap from the previous theta
+    let maxDiff = 0;
+    const gapIndex = existingThetas.reduce((maxGapIndex, theta, index) => {
+      let diff = 0;
+      if (index === existingThetas.length - 1) {
+        diff = existingThetas[0] - theta;
+      } else {
+        diff = existingThetas[index + 1] - theta;
+      }
+      if (diff < 0) {
+        diff += 360;
+      }
+      if (diff > maxDiff) {
+        maxDiff = diff;
+        maxGapIndex = index;
+      }
+      return maxGapIndex;
+    }, 0);
+
+    let theta: number;
+    if (existingThetas.length === 0) {
+      theta = Math.random() * 360;
+    } else if (existingThetas.length === 1) {
+      theta = randomGaussian(existingThetas[0]+180, 22.5);
+    } else {
+      const prevTheta = existingThetas[gapIndex];
+      theta = randomGaussian(maxDiff / 2 + prevTheta, maxDiff / 8);
+    }
+    existingThetas.push(theta % 360);
+    existingThetas = existingThetas.sort((a, b) => a - b);
+
     nodesWithPositions.push({
       ...node,
-      x: offsetX,
-      y: offsetY
+      x: radius * Math.cos(theta / 180 * Math.PI),
+      y: radius * Math.sin(theta / 180 * Math.PI)
     });
   });
   
