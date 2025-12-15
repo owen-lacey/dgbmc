@@ -40,7 +40,6 @@ function HomeContent() {
 
         setLoading(false);
       } catch (err) {
-        console.error('Failed to load actors:', err);
         setLoading(false);
       }
     };
