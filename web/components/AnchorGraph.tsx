@@ -20,23 +20,12 @@ export default function AnchorGraph({ anchorActorId }: AnchorGraphProps) {
     let mounted = true;
     
     const initGraph = async () => {
-      console.log('Starting anchor graph initialization...', anchorActorId);
-      
       try {
         // Load data
-        console.log('Loading graph data...');
         const fullGraphData = await loadGraphData();
-        console.log('Full graph data loaded:', {
-          nodeCount: fullGraphData.nodes.length,
-          edgeCount: fullGraphData.edges.length
-        });
-        
+
         // Filter data for anchor actor
         const filteredData = filterGraphDataByAnchor(fullGraphData, anchorActorId);
-        console.log('Filtered graph data:', {
-          nodeCount: filteredData.nodes.length,
-          edgeCount: filteredData.edges.length
-        });
         
         // Check if anchor has connections
         if (filteredData.edges.length === 0) {
@@ -53,7 +42,6 @@ export default function AnchorGraph({ anchorActorId }: AnchorGraphProps) {
           setLoading(false);
         }
       } catch (err) {
-        console.error('Failed to initialize anchor graph:', err);
         if (mounted) {
           setError('Failed to load graph data');
           setLoading(false);
@@ -69,11 +57,11 @@ export default function AnchorGraph({ anchorActorId }: AnchorGraphProps) {
   }, [anchorActorId]);
 
   const handleNodeClick = useCallback((node: any) => {
-    console.log('Clicked node:', node);
+    // Handle node click
   }, []);
 
   const handleEdgeClick = useCallback((edge: any) => {
-    console.log('Clicked edge:', edge);
+    // Handle edge click
   }, []);
 
   return (

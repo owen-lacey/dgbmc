@@ -19,56 +19,40 @@ export async function loadGraphData(): Promise<GraphData> {
 
   // Create new promise for loading data
   graphDataPromise = (async () => {
-  console.log('loadGraphData: Starting...');
-  
   const dataPaths = getDataPaths();
-  console.log('loadGraphData: Using data paths:', dataPaths);
-  
+
   try {
     // Load nodes CSV
-    console.log('loadGraphData: Fetching', dataPaths.nodes);
     const nodesResponse = await fetch(dataPaths.nodes);
-    console.log('loadGraphData: Nodes response status:', nodesResponse.status);
     const nodesText = await nodesResponse.text();
-    console.log('loadGraphData: Nodes text length:', nodesText.length);
-    
+
     // Load edges CSV
-    console.log('loadGraphData: Fetching', dataPaths.edges);
     const edgesResponse = await fetch(dataPaths.edges);
-    console.log('loadGraphData: Edges response status:', edgesResponse.status);
     const edgesText = await edgesResponse.text();
-    console.log('loadGraphData: Edges text length:', edgesText.length);
-    
+
     // Parse nodes
-    console.log('loadGraphData: Parsing nodes...');
     const nodesParsed = Papa.parse<Actor>(nodesText, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
     });
-    console.log('loadGraphData: Nodes parsed:', nodesParsed.data.length);
-    
+
     // Parse edges
-    console.log('loadGraphData: Parsing edges...');
     const edgesParsed = Papa.parse<MovieEdge>(edgesText, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
     });
-    console.log('loadGraphData: Edges parsed:', edgesParsed.data.length);
-    
+
     // Transform nodes to graph format
-    console.log('loadGraphData: Transforming nodes...');
     const graphNodes: GraphNode[] = nodesParsed.data.map((actor) => ({
       id: actor.id,
       label: actor.name,
       recognizability: actor.Recognizability,
       movieCount: actor.movie_count,
     }));
-    console.log('loadGraphData: Nodes transformed:', graphNodes.length);
-    
+
     // Transform edges to graph format
-    console.log('loadGraphData: Transforming edges...');
     const graphEdges: GraphEdge[] = edgesParsed.data.map((edge, index) => ({
       id: `e${index}`,
       source: edge.Source,
@@ -77,9 +61,7 @@ export async function loadGraphData(): Promise<GraphData> {
       movieId: edge.movie_id,
       releaseDate: edge.release_date,
     }));
-    console.log('loadGraphData: Edges transformed:', graphEdges.length);
-    
-    console.log('loadGraphData: Complete!');
+
     const result = {
       nodes: graphNodes,
       edges: graphEdges,
@@ -87,7 +69,6 @@ export async function loadGraphData(): Promise<GraphData> {
     graphDataCache = result;
     return result;
   } catch (error) {
-    console.error('Error loading graph data:', error);
     graphDataPromise = null; // Reset promise on error
     throw error;
   }
