@@ -211,3 +211,9 @@ __marimo__/
 node_modules/
 
 .next/
+
+# Next.js static export output
+web/out/
+
+# Auto-generated graph data (regenerated at build time)
+web/lib/graph-data.generated.ts

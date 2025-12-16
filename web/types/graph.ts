@@ -30,7 +30,7 @@ export interface GraphEdge {
   source: string;
   target: string;
   label: string;
-  movieId?: string;
+  movieId?: number;
   releaseDate?: string;
 }
 

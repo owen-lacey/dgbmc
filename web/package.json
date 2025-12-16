@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate-data": "node scripts/generate-graph-data.js",
+    "prebuild": "npm run generate-data",
+    "predev": "npm run generate-data",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
