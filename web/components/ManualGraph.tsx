@@ -33,6 +33,17 @@ export default function ManualGraph({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [animationKey, setAnimationKey] = useState(0);
 
+  // Touch interaction state
+  const [touchState, setTouchState] = useState<{
+    initialDistance: number | null;
+    initialZoom: number | null;
+    lastTouchPoint: { x: number; y: number } | null;
+  }>({
+    initialDistance: null,
+    initialZoom: null,
+    lastTouchPoint: null,
+  });
+
   // Cache edge timings to ensure consistency between edge rendering and node timing
   const edgeTimingsCache = useRef<Map<string, { duration: number; delay: number; lineLength: number }>>(new Map());
   
@@ -438,6 +449,110 @@ export default function ManualGraph({
     };
   }, [handleWheel]);
 
+  // Touch event handlers for mobile support
+  const getTouchDistance = (touch1: React.Touch, touch2: React.Touch) => {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      // Single finger - start panning
+      const touch = e.touches[0];
+      setIsDragging(true);
+      setDragStart({ x: touch.clientX - viewport.x, y: touch.clientY - viewport.y });
+      setTouchState({
+        initialDistance: null,
+        initialZoom: null,
+        lastTouchPoint: { x: touch.clientX, y: touch.clientY },
+      });
+    } else if (e.touches.length === 2) {
+      // Two fingers - start pinch zoom
+      e.preventDefault();
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = getTouchDistance(touch1, touch2);
+
+      setIsDragging(false);
+      setTouchState({
+        initialDistance: distance,
+        initialZoom: viewport.zoom,
+        lastTouchPoint: null,
+      });
+    }
+  }, [viewport]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1 && isDragging) {
+      // Single finger - pan
+      const touch = e.touches[0];
+      setViewport(prev => ({
+        ...prev,
+        x: touch.clientX - dragStart.x,
+        y: touch.clientY - dragStart.y,
+      }));
+    } else if (e.touches.length === 2 && touchState.initialDistance !== null && touchState.initialZoom !== null) {
+      // Two fingers - pinch zoom
+      e.preventDefault();
+
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const currentDistance = getTouchDistance(touch1, touch2);
+
+      // Calculate the center point between the two touches
+      const centerX = (touch1.clientX + touch2.clientX) / 2;
+      const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+      const svg = svgRef.current;
+      if (!svg) return;
+
+      const rect = svg.getBoundingClientRect();
+      const touchCenterX = centerX - rect.left;
+      const touchCenterY = centerY - rect.top;
+
+      // Calculate new zoom based on pinch distance change
+      const zoomFactor = currentDistance / touchState.initialDistance;
+      const newZoom = Math.max(
+        config.minZoom,
+        Math.min(config.maxZoom, touchState.initialZoom * zoomFactor)
+      );
+
+      // Convert touch center to world coordinates at the initial zoom
+      const worldX = (touchCenterX - viewport.x) / viewport.zoom;
+      const worldY = (touchCenterY - viewport.y) / viewport.zoom;
+
+      // Calculate new viewport to keep the world point under the touch center
+      setViewport({
+        x: touchCenterX - worldX * newZoom,
+        y: touchCenterY - worldY * newZoom,
+        zoom: newZoom,
+      });
+    }
+  }, [isDragging, dragStart, touchState, viewport, config]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 0) {
+      // All fingers lifted
+      setIsDragging(false);
+      setTouchState({
+        initialDistance: null,
+        initialZoom: null,
+        lastTouchPoint: null,
+      });
+    } else if (e.touches.length === 1) {
+      // One finger remaining - reset to single touch mode
+      const touch = e.touches[0];
+      setIsDragging(true);
+      setDragStart({ x: touch.clientX - viewport.x, y: touch.clientY - viewport.y });
+      setTouchState({
+        initialDistance: null,
+        initialZoom: null,
+        lastTouchPoint: { x: touch.clientX, y: touch.clientY },
+      });
+    }
+  }, [viewport]);
+
   // Click handler
   const handleClick = useCallback((e: React.MouseEvent) => {
     if (isDragging) return;
@@ -555,12 +670,15 @@ export default function ManualGraph({
       <svg
         ref={svgRef}
         className="absolute top-0 left-0"
-        style={{ width: '100%', height: '100%', cursor: isDragging ? 'grabbing' : 'grab' }}
+        style={{ width: '100%', height: '100%', cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <defs>
           {/* Define gradient for nodes */}
