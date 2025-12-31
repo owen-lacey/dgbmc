@@ -1,80 +1,12 @@
-import Papa from 'papaparse';
-import { Actor, MovieEdge, GraphData, GraphNode, GraphEdge } from '@/types/graph';
-import { getDataPaths } from './config';
+import { GraphData, GraphNode } from '@/types/graph';
+import { GRAPH_DATA } from './graph-data.generated';
 
-// Cache for graph data to prevent multiple loads
-let graphDataCache: GraphData | null = null;
-let graphDataPromise: Promise<GraphData> | null = null;
-
+/**
+ * Load graph data from the embedded build-time generated data.
+ * The data is bundled with the JavaScript, not exposed as a separate endpoint.
+ */
 export async function loadGraphData(): Promise<GraphData> {
-  // Return cached data if available
-  if (graphDataCache) {
-    return graphDataCache;
-  }
-
-  // Return existing promise if data is already loading
-  if (graphDataPromise) {
-    return graphDataPromise;
-  }
-
-  // Create new promise for loading data
-  graphDataPromise = (async () => {
-  const dataPaths = getDataPaths();
-
-  try {
-    // Load nodes CSV
-    const nodesResponse = await fetch(dataPaths.nodes);
-    const nodesText = await nodesResponse.text();
-
-    // Load edges CSV
-    const edgesResponse = await fetch(dataPaths.edges);
-    const edgesText = await edgesResponse.text();
-
-    // Parse nodes
-    const nodesParsed = Papa.parse<Actor>(nodesText, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-    });
-
-    // Parse edges
-    const edgesParsed = Papa.parse<MovieEdge>(edgesText, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-    });
-
-    // Transform nodes to graph format
-    const graphNodes: GraphNode[] = nodesParsed.data.map((actor) => ({
-      id: actor.id,
-      label: actor.name,
-      recognizability: actor.Recognizability,
-      movieCount: actor.movie_count,
-    }));
-
-    // Transform edges to graph format
-    const graphEdges: GraphEdge[] = edgesParsed.data.map((edge, index) => ({
-      id: `e${index}`,
-      source: edge.Source,
-      target: edge.Target,
-      label: edge.movie_title,
-      movieId: edge.movie_id,
-      releaseDate: edge.release_date,
-    }));
-
-    const result = {
-      nodes: graphNodes,
-      edges: graphEdges,
-    };
-    graphDataCache = result;
-    return result;
-  } catch (error) {
-    graphDataPromise = null; // Reset promise on error
-    throw error;
-  }
-  })();
-
-  return graphDataPromise;
+  return GRAPH_DATA;
 }
 
 export interface ActorOption {
@@ -89,7 +21,7 @@ export function getActorList(graphData: GraphData): ActorOption[] {
       name: node.label,
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
-  
+
   return actors;
 }
 
@@ -102,9 +34,9 @@ function randomGaussian(mean = 0, stdDev = 1) {
   // Box-Muller transform
   const u1 = Math.random();
   const u2 = Math.random();
-  
+
   const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
-  
+
   return z0 * stdDev + mean;
 }
 
@@ -114,30 +46,30 @@ export function filterGraphDataByAnchor(graphData: GraphData, anchorId: string):
   const connectedEdges = graphData.edges.filter(
     edge => edge.source === anchorId || edge.target === anchorId
   );
-  
+
   // Find all node IDs connected to the anchor
   const connectedNodeIds = new Set<string>([anchorId]);
   connectedEdges.forEach(edge => {
     connectedNodeIds.add(edge.source);
     connectedNodeIds.add(edge.target);
   });
-  
+
   // Filter nodes to include only anchor and connected nodes
-  const filteredNodes = graphData.nodes.filter(node => 
+  const filteredNodes = graphData.nodes.filter(node =>
     connectedNodeIds.has(node.id)
   );
-  
+
   // Calculate positions for preset layout
   const anchorNode = filteredNodes.find(n => n.id === anchorId);
   const costarNodes = filteredNodes.filter(n => n.id !== anchorId);
-  
+
   // Sort costars by recognizability (descending)
   costarNodes.sort((a, b) => {
     const aRecog = a.recognizability || 0;
     const bRecog = b.recognizability || 0;
     return bRecog - aRecog;
   });
-  
+
   // Position anchor at center
   const nodesWithPositions: GraphNode[] = [];
   if (anchorNode) {
@@ -147,12 +79,12 @@ export function filterGraphDataByAnchor(graphData: GraphData, anchorId: string):
       y: 0
     });
   }
-  
+
   const spacing = 10; // pixels between nodes
 
   // Ordered list of angles around the circle
   let existingThetas: number[] = [];
-  
+
   costarNodes.forEach((node, index) => {
     const radius = 100 + (index + 1 ) * spacing;
     // find the index of the theta with the biggest gap from the previous theta
@@ -192,7 +124,7 @@ export function filterGraphDataByAnchor(graphData: GraphData, anchorId: string):
       y: radius * Math.sin(theta / 180 * Math.PI)
     });
   });
-  
+
   return {
     nodes: nodesWithPositions,
     edges: connectedEdges,
